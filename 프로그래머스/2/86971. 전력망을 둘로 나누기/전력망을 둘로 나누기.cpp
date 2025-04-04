@@ -1,75 +1,32 @@
-#include <string>
-#include <vector>
-#include <cmath>
+#include <bits/stdc++.h>
 
 using namespace std;
 
-vector<bool> visited;
-
-vector<vector<int>> makeGraph(vector<vector<int>>&wires, vector<int>& excep, int n)
-{
-    vector<vector<int>> graph(n + 1, vector<int>());
-    
-    for (vector<int>& wire : wires)
-    {
-        if (wire == excep)
-        {
-            continue;
-        }
-        graph[wire[0]].push_back(wire[1]);
-        graph[wire[1]].push_back(wire[0]);
-    }
-    
-    return graph;
-}
-
-int DFS(vector<vector<int>>& graph, int current)
-{
-    bool check = true;
-    for (int i = 0; i < graph[current].size(); i++)
-    {
-        if (!visited[graph[current][i]])
-        {
-            check = false;
-            break;
-        }
-    }
-    if (check)
-    {
-        return 1;
-    }
-    
-    visited[current] = true;
-    int count = 1;
-    
-    for (int i = 0; i < graph[current].size(); i++)
-    {
-        int next = graph[current][i];
-        if (!visited[next])
-        {
-            count += DFS(graph, graph[current][i]);
-        }
-    }
-    
-    return count;
-}
-
 int solution(int n, vector<vector<int>> wires) {
-    vector<int> nodeCount;
-    
-    for (vector<int>& wire : wires)
-    {
-        visited.clear();
-        visited.assign(wires.size() + 1, false);
-        vector<vector<int>> graph = makeGraph(wires, wire, n);
-        nodeCount.push_back(DFS(graph, 1));
+    vector<vector<int>> graph(n + 1);
+    for(int i = 0; i < (int)wires.size(); i++) {
+        int u = wires[i][0];
+        int v = wires[i][1];
+        graph[u].push_back(v);
+        graph[v].push_back(u);
     }
-    
-    int min_val = n;
-    for (int node : nodeCount)
-    {
-        min_val = min(min_val, abs(abs(n - node) - node));
+    vector<int> siz(n + 1);
+    function<void(int, int)> dfs = [&](int cur, int prev)  -> void {
+        siz[cur] = 1;
+        for(int nxt : graph[cur]) {
+            if(nxt == prev) continue;
+            dfs(nxt, cur);
+            siz[cur] += siz[nxt];
+        }
+    };
+    dfs(1, -1);
+    int answer = INT_MAX;
+    for(int i = 1; i <= n; i++) {
+        for(int j : graph[i]) {
+            int l = siz[j];
+            int r = n - siz[j];
+            answer = min(answer, abs(l - r));
+        }
     }
-    
-    return min_val;
+    return answer;
 }
