@@ -18,12 +18,12 @@ int solution(vector<vector<int>> scores) {
              return a[1] < b[1];
          });
     
-    int max_b = -1;
+    int max_1 = -1;
     for (vector<int>& score : scores)
     {
-        if (score[1] >= max_b)
+        if (score[1] >= max_1)
         {
-            max_b = score[1];
+            max_1 = score[1];
             survivors.push_back(score);
         }
         else
