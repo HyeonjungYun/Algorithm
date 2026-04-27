@@ -5,20 +5,7 @@ using namespace std;
 int solution(vector<int> nums)
 {
     int answer = 0;
-    set<int> s;
-    int numsSize = nums.size();
+    set<int> s(nums.begin(), nums.end());
     
-    for(int i : nums)
-    {
-        s.insert(i);
-    }
-    if (s.size() > numsSize/2)
-    {
-        answer = numsSize/2;
-    }
-    else
-    {
-        answer = s.size();
-    }
-    return answer;
+    return min(s.size(), nums.size()/2);
 }
